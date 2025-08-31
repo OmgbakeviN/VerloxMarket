@@ -50,6 +50,9 @@ INSTALLED_APPS = [
 
     # App metier
     'core',
+    'users',
+    'companies',
+    'trading',
 ]
 
 MIDDLEWARE = [
@@ -159,4 +162,6 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [o.strip() for o in os.getenv("DJANGO_CORS_ORIGINS", "http://localhost:5173").split(",")]
 CORS_ALLOW_CREDENTIALS = True
 
-
+# Email (console en dev; voir .env pour SMTP)
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "no-reply@verlox.local")

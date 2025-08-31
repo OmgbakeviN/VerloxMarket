@@ -1,0 +1,8 @@
+[
+    { "model": "companies.company", "pk": 1, "fields": { "name": "Verlox Energy", "symbol": "VLXE", "payout_percent": 80, "volatility": "MID", "is_active": true } },
+    { "model": "companies.company", "pk": 2, "fields": { "name": "CamTech Mobile", "symbol": "CTMB", "payout_percent": 75, "volatility": "LOW", "is_active": true } },
+    { "model": "companies.company", "pk": 3, "fields": { "name": "Douala Foods", "symbol": "DLFD", "payout_percent": 85, "volatility": "HIGH", "is_active": true } },
+    { "model": "companies.company", "pk": 4, "fields": { "name": "SmartSana Cloud", "symbol": "SSCL", "payout_percent": 78, "volatility": "MID", "is_active": true } },
+    { "model": "companies.company", "pk": 5, "fields": { "name": "Vitesse Logistics", "symbol": "VTLS", "payout_percent": 82, "volatility": "MID", "is_active": true } },
+    { "model": "companies.company", "pk": 6, "fields": { "name": "Pivot Engineering", "symbol": "PVEN", "payout_percent": 90, "volatility": "HIGH", "is_active": true } }
+  ]
