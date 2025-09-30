@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.utils import timezone
+from django.db import transaction
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
@@ -59,18 +60,35 @@ class TradeCreateSerializer(serializers.Serializer):
         return attrs
 
     def create(self, validated_data):
+        from users.models import UserProfile  # import local pour éviter circulaires
         user = self.context["request"].user
-        return Trade.objects.create(
-            user=user,
-            company=validated_data["company"],
-            direction=validated_data["direction"],
-            stake=validated_data["stake"],
-            payout_percent_snapshot=validated_data["payout_percent_snapshot"],
-            open_price=validated_data["open_price"],
-            opened_at=validated_data["opened_at"],
-            expires_at=validated_data["expires_at"],
-            status="OPEN",
-        )
+        stake = Decimal(validated_data["stake"])
+
+        with transaction.atomic():
+            # 🔒 Verrouille la ligne profil pour ce user pendant la transaction
+            profile = UserProfile.objects.select_for_update().get(user=user)
+
+            # Re-check du solde dans la transaction (anti-race condition)
+            if profile.balance < stake:
+                raise serializers.ValidationError({"stake": "Insufficient balance."})
+
+            # 💳 Débiter immédiatement la mise
+            profile.balance = (profile.balance - stake).quantize(Decimal("0.01"))
+            profile.save(update_fields=["balance"])
+
+            # Créer le trade en status=OPEN (mise déjà débitée)
+            trade = Trade.objects.create(
+                user=user,
+                company=validated_data["company"],
+                direction=validated_data["direction"],
+                stake=stake,
+                payout_percent_snapshot=validated_data["payout_percent_snapshot"],
+                open_price=validated_data["open_price"],
+                opened_at=validated_data["opened_at"],
+                expires_at=validated_data["expires_at"],
+                status="OPEN",
+            )
+        return trade
 
 class TradeSerializer(serializers.ModelSerializer):
     company_symbol = serializers.CharField(source="company.symbol", read_only=True)
