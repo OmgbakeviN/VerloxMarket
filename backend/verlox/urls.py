@@ -23,4 +23,5 @@ urlpatterns = [
     path("api/auth/", include("users.urls")),  # Regroupe l'API V1 dans l'app core
     path("api/companies/", include("companies.urls")),  # Regroupe l'API V1 dans l'app core
     path("api/trading/", include("trading.urls")),  # Regroupe l'API V1 dans l'app core
+    path("api/wallet/", include("wallet.urls")),  # Regroupe l'API V1 dans l'app core
 ]

@@ -1,0 +1,11 @@
+Bonjour,
+
+Votre dépôt est confirmé.
+
+Référence: {{ reference }}
+Opérateur: {{ provider }}
+Numéro: {{ phone }}
+Montant: {{ amount_xaf }} XAF
+Crédit: {{ coins_vc }} VC (taux {{ rate_xaf_per_vc }} XAF/VC)
+
+Merci d'utiliser VerloxMarket.
