@@ -32,6 +32,7 @@ class RegisterView(APIView):
                 "email": user.email,
                 "balance": str(user.profile.balance),
                 "currency": user.profile.currency,
+                "balance_vc": user.profile.balance_vc,
             },
         }
         return Response(data, status=status.HTTP_201_CREATED)
@@ -68,6 +69,7 @@ class LoginView(APIView):
                 "email": user_auth.email,
                 "balance": str(user_auth.profile.balance),
                 "currency": user_auth.profile.currency,
+                "balance_vc": user_auth.profile.balance_vc,
             },
         }
 
@@ -88,5 +90,6 @@ class MeView(APIView):
             "email": user.email,
             "balance": user.profile.balance,
             "currency": user.profile.currency,
+            "balance_vc": user.profile.balance_vc,
         }
         return Response(MeSerializer(payload).data, status=status.HTTP_200_OK)

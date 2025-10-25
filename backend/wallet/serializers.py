@@ -55,3 +55,20 @@ class DepositSerializer(serializers.ModelSerializer):
             "amount_xaf", "rate_xaf_per_vc", "coins_vc",
             "status", "created_at",
         ]
+
+
+class DepositListSerializer(serializers.ModelSerializer):
+    phone_masked = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Deposit
+        fields = [
+            "id", "reference", "provider", "phone_masked",
+            "amount_xaf", "rate_xaf_per_vc", "coins_vc",
+            "status", "created_at",
+        ]
+
+    def get_phone_masked(self, obj):
+        # ***1234 (garde les 4 derniers)
+        tail = obj.phone[-4:] if obj.phone else ""
+        return f"***{tail}"

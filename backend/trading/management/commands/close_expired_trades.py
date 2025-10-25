@@ -36,24 +36,21 @@ class Command(BaseCommand):
             )
 
             # 3) transaction atomique: MAJ trade + MAJ solde
-            with transaction.atomic():
-                trade.close_price = close_price
-                trade.status = status
-                trade.pnl = pnl  # pnl = profit si WIN, = -stake si LOST (pour l’historique/user-facing)
-                trade.save(update_fields=["close_price", "status", "pnl"])
+        with transaction.atomic():
+            trade.close_price = close_price
+            trade.status = status
+            trade.pnl = pnl  # net: +profit_vc si gagné, -stake si perdu
+            trade.save(update_fields=["close_price", "status", "pnl"])
 
-                profile = trade.user.profile
-                # 💰 Créditer uniquement ce qui doit revenir, car stake déjà débité à l'ouverture
-                credit = Decimal("0.00")
-                if status == "WON":
-                    # pnl est le profit (ex: 800 si 80% de 1000)
-                    credit = trade.stake + pnl
-                else:
-                    # LOST : rien à créditer
-                    credit = Decimal("0.00")
+            profile = trade.user.profile
+            credit = Decimal("0.00")
+            if status == "WON":
+                credit = trade.stake + pnl   # pnl est le profit_vc
+            else:
+                credit = Decimal("0.00")     # perdu: rien à créditer (mise déjà débitée)
 
-                profile.balance = (profile.balance + credit).quantize(Decimal("0.01"))
-                profile.save(update_fields=["balance"])
+            profile.balance_vc = (profile.balance_vc + credit).quantize(Decimal("0.01"))
+            profile.save(update_fields=["balance_vc"])
 
             closed_count += 1
 
