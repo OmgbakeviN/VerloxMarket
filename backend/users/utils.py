@@ -13,3 +13,13 @@ def send_login_email(user):
         f"- L'équipe Verlox"
     )
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=True)
+
+def send_verification_pin_email(email: str, pin: str):
+    subject = "VerloxMarket — Vérification de votre email"
+    msg = (
+        "Bonjour,\n\n"
+        f"Votre code de vérification est : {pin}\n"
+        "Il est valable 10 minutes.\n\n"
+        "Si vous n'êtes pas à l'origine de cette demande, ignorez cet email."
+    )
+    send_mail(subject, msg, settings.DEFAULT_FROM_EMAIL, [email], fail_silently=False)

@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import RegisterSerializer, LoginSerializer, MeSerializer
+from .serializers import RegisterSerializer, LoginSerializer, MeSerializer, VerifyEmailSerializer, ResendPinSerializer
 from .utils import send_login_email
 
 # Create your views here.
@@ -13,29 +13,27 @@ User = get_user_model()
 
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
-
     def post(self, request):
-        """
-        Crée un user avec email+password.
-        Retourne access/refresh + info profil.
-        """
-        serializer = RegisterSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        ser = RegisterSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        ser.save()
+        return Response({"detail": "Compte créé. Un code de vérification vous a été envoyé."}, status=status.HTTP_201_CREATED)
 
-        # Générer les tokens JWT pour l'auto-login après inscription
-        refresh = RefreshToken.for_user(user)
-        data = {
-            "access": str(refresh.access_token),
-            "refresh": str(refresh),
-            "user": {
-                "email": user.email,
-                "balance": str(user.profile.balance),
-                "currency": user.profile.currency,
-                "balance_vc": user.profile.balance_vc,
-            },
-        }
-        return Response(data, status=status.HTTP_201_CREATED)
+class VerifyEmailView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def post(self, request):
+        ser = VerifyEmailSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        ser.save()
+        return Response({"detail": "Email vérifié. Vous pouvez vous connecter."}, status=status.HTTP_200_OK)
+
+class ResendPinView(APIView):
+    permission_classes = [permissions.AllowAny]
+    def post(self, request):
+        ser = ResendPinSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        ser.save()
+        return Response({"detail": "Nouveau code envoyé."}, status=status.HTTP_200_OK)
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
