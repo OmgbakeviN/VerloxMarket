@@ -162,7 +162,11 @@ SIMPLE_JWT = {
 }
 
 # --- CORS (autoriser le front en dev) ---
-CORS_ALLOWED_ORIGINS = [o.strip() for o in os.getenv("DJANGO_CORS_ORIGINS", "http://localhost:5173","https://verlox-front.vercel.app").split(",")]
+CORS_ALLOWED_ORIGINS = [
+    "https://verlox-front.vercel.app",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
 CORS_ALLOW_CREDENTIALS = True
 
 # Email (console en dev; voir .env pour SMTP)
@@ -181,3 +185,4 @@ SERVER_EMAIL = os.getenv("SERVER_EMAIL", DEFAULT_FROM_EMAIL)
 CSRF_TRUSTED_ORIGINS = [
     "https://verlox-front.vercel.app",
 ]
+ALLOWED_HOSTS = ["kevinomgba.pythonanywhere.com", "127.0.0.1", "localhost"]
